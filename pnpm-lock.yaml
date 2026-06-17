@@ -68,6 +68,9 @@ importers:
       split-type:
         specifier: ^0.3.4
         version: 0.3.4
+      super-hover:
+        specifier: ^0.1.2
+        version: 0.1.2(react@19.2.4)
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.5.0
@@ -5086,6 +5089,17 @@ packages:
       '@babel/core':
         optional: true
       babel-plugin-macros:
+        optional: true
+
+  super-hover@0.1.2:
+    resolution: {integrity: sha512-4aZT3zUS3B8hPM3mQUPpRZZ0l10mLcSJV3k0lmABcaFU4A05DhcjdRj+r8qwjgQ2/vWvB3PMyuw4fU48PmYBkw==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      vue: ^3.4.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      vue:
         optional: true
 
   superjson@2.2.6:
@@ -10619,6 +10633,10 @@ snapshots:
       react: 19.2.4
     optionalDependencies:
       '@babel/core': 7.29.0
+
+  super-hover@0.1.2(react@19.2.4):
+    optionalDependencies:
+      react: 19.2.4
 
   superjson@2.2.6:
     dependencies:

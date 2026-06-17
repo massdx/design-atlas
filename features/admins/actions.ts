@@ -5,8 +5,17 @@ import { users } from "@/features/auth/schema";
 import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+async function buildSignInUrl() {
+    const h = await headers();
+    const host = h.get("x-forwarded-host") ?? h.get("host");
+    const proto = h.get("x-forwarded-proto") ?? "https";
+    if (!host) return "/manager/sign-in";
+    return `${proto}://${host}/manager/sign-in`;
+}
 
 export async function inviteAdmin(rawEmail: string, rawName?: string) {
     try {
@@ -17,6 +26,8 @@ export async function inviteAdmin(rawEmail: string, rawName?: string) {
         const name = rawName?.trim() || null;
         if (!email) return { error: "Email requis" };
         if (!EMAIL_RE.test(email)) return { error: "Email invalide" };
+
+        const signInUrl = await buildSignInUrl();
 
         const existing = await db
             .select()
@@ -33,7 +44,7 @@ export async function inviteAdmin(rawEmail: string, rawName?: string) {
                 .where(eq(users.id, row.id))
                 .returning();
             revalidatePath("/manager/admins");
-            return { id: restored.id, email: restored.email };
+            return { id: restored.id, email: restored.email, signInUrl };
         }
 
         const [created] = await db
@@ -47,7 +58,7 @@ export async function inviteAdmin(rawEmail: string, rawName?: string) {
             .returning();
 
         revalidatePath("/manager/admins");
-        return { id: created.id, email: created.email };
+        return { id: created.id, email: created.email, signInUrl };
     } catch (err) {
         console.error("[inviteAdmin] failed:", err);
         return {

@@ -33,6 +33,7 @@ import {
     updateCategory,
 } from "@/features/categories/actions";
 import type { CategoryWithCount } from "@/features/categories/queries";
+import { categoryColor } from "@/lib/dot-color";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -79,7 +80,14 @@ export function CategoriesDataTable({
                                 className="border-b border-[#080807]/5 last:border-0 hover:bg-[#080807]/2"
                             >
                                 <TableCell className="py-3 text-[13px] text-[#080807]">
-                                    {c.name}
+                                    <span className="inline-flex items-center gap-2">
+                                        <span
+                                            aria-hidden
+                                            className="inline-block size-2.5 shrink-0 rounded-full"
+                                            style={{ backgroundColor: categoryColor(c) }}
+                                        />
+                                        {c.name}
+                                    </span>
                                 </TableCell>
                                 <TableCell className="py-3">
                                     <span className={ADMIN_META_CLASS}>
@@ -213,7 +221,7 @@ function RenameDialog({
                     <Button
                         type="button"
                         onClick={submit}
-                        disabled={isPending || !name.trim()}
+                        disabled={isPending}
                         className={ADMIN_BUTTON_PRIMARY_CLASS}
                     >
                         {isPending ? "Enregistrement..." : "Enregistrer"}

@@ -11,10 +11,11 @@ export type ResourceRow = {
     url: string;
     type: "external" | "file";
     description: string | null;
+    imageUrl: string | null;
     status: "pending" | "approved" | "rejected";
     submittedByEmail: string | null;
     createdAt: Date;
-    category: { id: string; name: string } | null;
+    category: { id: string; name: string; color: string | null } | null;
 };
 
 export type ListResourcesParams = {
@@ -56,12 +57,14 @@ export async function listResources({
                 url: resources.url,
                 type: resources.type,
                 description: resources.description,
+                imageUrl: resources.imageUrl,
                 status: resources.status,
                 submittedByEmail: resources.submittedByEmail,
                 createdAt: resources.createdAt,
                 category: {
                     id: categories.id,
                     name: categories.name,
+                    color: categories.color,
                 },
             })
             .from(resources)

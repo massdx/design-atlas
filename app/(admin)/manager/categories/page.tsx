@@ -1,7 +1,10 @@
 import { auth } from "@/features/auth/server";
 import { CategoriesDataTable } from "@/features/categories/components/categories-data-table";
 import { CreateCategoryDialog } from "@/features/categories/components/create-category-dialog";
-import { listCategoriesWithCount } from "@/features/categories/queries";
+import {
+    listCategoriesWithCount,
+    listUsedCategoryColors,
+} from "@/features/categories/queries";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +13,10 @@ export default async function CategoriesPage() {
     const { data: session } = await auth.getSession();
     if (!session?.user) redirect("/manager/sign-in");
 
-    const categories = await listCategoriesWithCount();
+    const [categories, usedColors] = await Promise.all([
+        listCategoriesWithCount(),
+        listUsedCategoryColors(),
+    ]);
 
     return (
         <main className="mx-auto max-w-6xl px-6 py-10">
@@ -27,7 +33,7 @@ export default async function CategoriesPage() {
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <CreateCategoryDialog />
+                    <CreateCategoryDialog usedColors={usedColors} />
                 </div>
             </header>
 

@@ -13,7 +13,7 @@ const links = [
 export function ManagerNav() {
     const pathname = usePathname();
     return (
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-5">
             {links.map((l) => {
                 const active =
                     l.href === "/manager"
@@ -24,10 +24,10 @@ export function ManagerNav() {
                         key={l.href}
                         href={l.href}
                         className={cn(
-                            "inline-flex h-9 items-center px-3 text-[12px] font-medium shadow-2xs transition-colors",
+                            "text-[12px] font-medium transition-opacity hover:opacity-100",
                             active
-                                ? "bg-[#080807] text-white"
-                                : "bg-[#F5F5F5] text-[#080807] hover:bg-[#080807]/10",
+                                ? "text-[#080807] opacity-100"
+                                : "text-[#080807] opacity-50",
                         )}
                     >
                         {l.label}

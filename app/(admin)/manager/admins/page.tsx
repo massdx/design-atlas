@@ -1,7 +1,7 @@
-import { getAdmin } from "@/features/auth/require-admin";
 import { AdminsDataTable } from "@/features/admins/components/admins-data-table";
 import { InviteAdminDialog } from "@/features/admins/components/invite-admin-dialog";
 import { listAdmins } from "@/features/admins/queries";
+import { getAdmin } from "@/features/auth/require-admin";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";

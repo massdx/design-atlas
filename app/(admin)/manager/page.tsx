@@ -1,6 +1,9 @@
 import { auth } from "@/features/auth/server";
 import { CreateCategoryDialog } from "@/features/categories/components/create-category-dialog";
-import { listCategories } from "@/features/categories/queries";
+import {
+  listCategories,
+  listUsedCategoryColors,
+} from "@/features/categories/queries";
 import { CreateResourceDialog } from "@/features/resources/components/create-resource-dialog";
 import { Pagination } from "@/features/resources/components/pagination";
 import { ResourcesDataTable } from "@/features/resources/components/resources-data-table";
@@ -31,7 +34,7 @@ export default async function ManagerPage({
   const status = (params.status ?? "all") as ResourceStatus;
   const search = params.q ?? "";
 
-  const [{ rows, total, pageCount }, categories] = await Promise.all([
+  const [{ rows, total, pageCount }, categories, usedColors] = await Promise.all([
     listResources({
       page,
       pageSize: PAGE_SIZE,
@@ -39,6 +42,7 @@ export default async function ManagerPage({
       search,
     }),
     listCategories(),
+    listUsedCategoryColors(),
   ]);
 
   return (
@@ -60,7 +64,7 @@ export default async function ManagerPage({
             {session.user.email}
           </p>
           <div className="flex items-center gap-2">
-            <CreateCategoryDialog />
+            <CreateCategoryDialog usedColors={usedColors} />
             <CreateResourceDialog
               categories={categories.map((c) => ({
                 id: c.id,

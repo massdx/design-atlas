@@ -1,10 +1,10 @@
 import type { Category } from "@/features/categories/schema";
 import { buildHref } from "@/lib/build-href";
-import { dotColor } from "@/lib/dot-color";
+import { categoryColor } from "@/lib/dot-color";
 import { CategoryPill } from "./category-pill";
 
 type CategoryFiltersProps = {
-    categories: Pick<Category, "id" | "name">[];
+    categories: Pick<Category, "id" | "name" | "color">[];
     activeCategoryId: string | null;
     search?: string;
 };
@@ -31,7 +31,7 @@ export function CategoryFilters({
                         href={buildHref("/", { q: search, category: c.id })}
                         active={activeCategoryId === c.id}
                         label={c.name}
-                        dot={dotColor(c.id)}
+                        dot={categoryColor(c)}
                     />
                 ))}
             </div>

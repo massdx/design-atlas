@@ -1,10 +1,10 @@
 "use client";
 
 import { useTapHaptic } from "@/hooks/use-tap-haptic";
-import { dotColor } from "@/lib/dot-color";
+import { categoryColor } from "@/lib/dot-color";
 import { CheckIcon } from "@radix-ui/react-icons";
 
-export type Category = { id: string; name: string };
+export type Category = { id: string; name: string; color?: string | null };
 
 export function CategoryPicker({
     categories,
@@ -51,7 +51,7 @@ export function CategoryPicker({
                             <span
                                 className="absolute inset-0 m-auto block size-[7px] rounded-full transition-opacity"
                                 style={{
-                                    backgroundColor: dotColor(c.id),
+                                    backgroundColor: categoryColor(c),
                                     opacity: active ? 0 : 1,
                                 }}
                             />

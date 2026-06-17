@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
 import { users } from "@/features/auth/schema";
+import { db } from "@/lib/db";
 import { desc } from "drizzle-orm";
 
 export type AdminRow = {

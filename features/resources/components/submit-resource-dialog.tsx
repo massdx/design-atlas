@@ -17,9 +17,10 @@ import { toast } from "sonner";
 import type { Category } from "./submit/category-picker";
 import { DESC_MAX } from "./submit/constants";
 import { SubmitStepDetails } from "./submit/submit-step-details";
+import { SubmitStepSuccess } from "./submit/submit-step-success";
 import { SubmitStepUrl } from "./submit/submit-step-url";
 
-type Step = "url" | "details";
+type Step = "url" | "details" | "success";
 
 export function SubmitResourceDialog({
     categories,
@@ -101,8 +102,7 @@ export function SubmitResourceDialog({
                 toast.error(res.error);
                 return;
             }
-            toast.success("Merci ! Ta ressource est en attente de validation.");
-            setOpen(false);
+            setStep("success");
         });
     }
 
@@ -124,14 +124,15 @@ export function SubmitResourceDialog({
             <DialogContent className="h-full border-0 bg-transparent p-0 shadow-none sm:max-w-2xl">
                 <div className="py-12">
                     <AnimatePresence mode="popLayout" initial>
-                        {step === "url" ? (
+                        {step === "url" && (
                             <SubmitStepUrl
                                 url={url}
                                 onUrlChange={setUrl}
                                 onSubmit={handleFetchAndNext}
                                 isLoading={isFetching}
                             />
-                        ) : (
+                        )}
+                        {step === "details" && (
                             <SubmitStepDetails
                                 url={url}
                                 title={title}
@@ -148,6 +149,9 @@ export function SubmitResourceDialog({
                                 onBack={() => setStep("url")}
                                 onSubmit={handleSubmit}
                             />
+                        )}
+                        {step === "success" && (
+                            <SubmitStepSuccess onClose={() => setOpen(false)} />
                         )}
                     </AnimatePresence>
                 </div>
