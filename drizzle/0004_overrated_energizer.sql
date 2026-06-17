@@ -1,0 +1,1 @@
+ALTER TABLE "resources" ADD COLUMN "tags" text[] DEFAULT '{}'::text[] NOT NULL;

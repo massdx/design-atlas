@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1778155669497,
+      "tag": "0000_far_marrow",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1780220687529,
+      "tag": "0001_outgoing_shinobi_shaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780222678502,
+      "tag": "0002_majestic_iron_fist",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1781691688857,
+      "tag": "0003_silly_agent_brand",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1781694485218,
+      "tag": "0004_overrated_energizer",
+      "breakpoints": true
+    }
+  ]
+}
