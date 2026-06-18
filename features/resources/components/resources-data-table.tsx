@@ -25,16 +25,20 @@ import {
     deleteResource,
     rejectResource,
 } from "@/features/resources/actions";
+import { EditResourceDialog } from "@/features/resources/components/edit-resource-dialog";
 import type { ResourceRow } from "@/features/resources/queries";
 import { cn } from "@/lib/utils";
 import {
     CheckIcon,
     Cross2Icon,
     DotsHorizontalIcon,
+    Pencil1Icon,
     TrashIcon,
 } from "@radix-ui/react-icons";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
+
+type Category = { id: string; name: string };
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
     day: "2-digit",
@@ -54,8 +58,15 @@ const STATUS_LABEL = {
     rejected: "Rejetée",
 } as const;
 
-export function ResourcesDataTable({ rows }: { rows: ResourceRow[] }) {
+export function ResourcesDataTable({
+    rows,
+    categories,
+}: {
+    rows: ResourceRow[];
+    categories: Category[];
+}) {
     const [isPending, startTransition] = useTransition();
+    const [editing, setEditing] = useState<ResourceRow | null>(null);
 
     function run(
         action: () => Promise<{ error?: string } | undefined | void>,
@@ -166,6 +177,13 @@ export function ResourcesDataTable({ rows }: { rows: ResourceRow[] }) {
                                         className="w-40 rounded-none border-0  shadow"
                                     >
                                         <DropdownMenuItem
+                                            className="rounded-none text-[12px] focus:bg-[#080807]/5 focus:text-[#080807]"
+                                            onClick={() => setEditing(r)}
+                                        >
+                                            <Pencil1Icon className="size-3.5" /> Modifier
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator className="bg-[#080807]/10" />
+                                        <DropdownMenuItem
                                             disabled={r.status === "approved"}
                                             className="rounded-none text-[12px] focus:bg-[#080807]/5 focus:text-[#080807]"
                                             onClick={() =>
@@ -209,6 +227,15 @@ export function ResourcesDataTable({ rows }: { rows: ResourceRow[] }) {
                     ))}
                 </TableBody>
             </Table>
+
+            <EditResourceDialog
+                resource={editing}
+                categories={categories}
+                open={editing !== null}
+                onOpenChange={(next) => {
+                    if (!next) setEditing(null);
+                }}
+            />
         </div>
     );
 }
