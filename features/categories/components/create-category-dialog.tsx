@@ -9,7 +9,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/custom-dialog";
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -160,10 +160,11 @@ export function CreateCategoryDialog({
                         )}
                     </div>
                 </div>
-                <DialogFooter>
+                <DialogFooter className="mt-6">
                     <Button
                         type="button"
                         onClick={() => setOpen(false)}
+                        variant="outline"
                         disabled={isPending}
                         className={ADMIN_BUTTON_OUTLINE_CLASS}
                     >
@@ -174,6 +175,7 @@ export function CreateCategoryDialog({
                         onClick={handleSubmit}
                         disabled={isPending || !name.trim()}
                         className={cn(ADMIN_BUTTON_PRIMARY_CLASS)}
+                        variant="default"
                     >
                         {isPending ? "Création..." : "Créer"}
                     </Button>

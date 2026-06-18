@@ -82,6 +82,7 @@ export function SearchBar({
                 trigger={
                     <Button
                         type="button"
+                        title="Soumettre une ressource"
                         size="sm"
                         onClick={tap}
                         aria-label="Soumettre une ressource"

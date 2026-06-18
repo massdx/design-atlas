@@ -73,7 +73,7 @@ export function AdminsDataTable({
                                 key={a.id}
                                 className="border-b border-[#080807]/5 last:border-0 hover:bg-[#080807]/2"
                             >
-                                <TableCell className="py-3 text-[13px] text-[#080807]">
+                                <TableCell className="py-2 text-[13px] text-[#080807]">
                                     {a.email}
                                     {isSelf ? (
                                         <span className="ml-2 font-mono text-[10px] uppercase tracking-wider text-[#080807]/40">
@@ -81,10 +81,10 @@ export function AdminsDataTable({
                                         </span>
                                     ) : null}
                                 </TableCell>
-                                <TableCell className="py-3 text-[13px] text-[#080807]/70">
+                                <TableCell className="py-2 text-[13px] text-[#080807]/70">
                                     {a.name ?? "—"}
                                 </TableCell>
-                                <TableCell className="py-3">
+                                <TableCell className="py-2">
                                     <span className="inline-flex items-center gap-2 text-[12px] text-[#080807]/80">
                                         <span
                                             className={cn(
@@ -103,31 +103,35 @@ export function AdminsDataTable({
                                                 : "Invité"}
                                     </span>
                                 </TableCell>
-                                <TableCell className={`py-3 ${ADMIN_META_CLASS}`}>
+                                <TableCell className={`py-2 ${ADMIN_META_CLASS}`}>
                                     {new Date(a.createdAt).toLocaleDateString("fr-FR")}
                                 </TableCell>
-                                <TableCell className="py-3 text-right">
+                                <TableCell className="py-2 text-right">
                                     {isSelf ? (
                                         <span className={ADMIN_META_CLASS}>—</span>
                                     ) : a.isAdmin ? (
                                         <Button
                                             type="button"
                                             disabled={isPending}
+                                            size="sm"
                                             onClick={() =>
                                                 run(() => revokeAdmin(a.id), "Accès révoqué")
                                             }
-                                            className="inline-flex h-9 items-center gap-1.5 rounded-none border-0 bg-[#F5F5F5] px-3 text-[12px] font-medium text-red-600 shadow-2xs transition-colors hover:bg-red-600/10"
+                                            variant="destructive"
+                                            className=" "
                                         >
                                             Révoquer
                                         </Button>
                                     ) : (
                                         <Button
                                             type="button"
+                                            size="sm"
                                             disabled={isPending}
                                             onClick={() =>
                                                 run(() => restoreAdmin(a.id), "Accès restauré")
                                             }
-                                            className={ADMIN_BUTTON_OUTLINE_CLASS}
+                                            variant="default"
+                                           
                                         >
                                             Restaurer
                                         </Button>

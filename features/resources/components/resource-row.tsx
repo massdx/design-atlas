@@ -1,7 +1,7 @@
 "use client";
 
-import { categoryColor } from "@/lib/dot-color";
 import { useTapHaptic } from "@/hooks/use-tap-haptic";
+import { categoryColor } from "@/lib/dot-color";
 import {
     ArrowRightIcon
 } from "@radix-ui/react-icons";

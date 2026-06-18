@@ -7,7 +7,14 @@ export function hostname(url: string) {
 }
 
 export function formatShortDate(d: Date) {
-    return new Intl.DateTimeFormat("en-US", {
+    const sameYear = d.getFullYear() === new Date().getFullYear();
+    if (sameYear) {
+        return new Intl.DateTimeFormat("fr-FR", {
+            month: "short",
+            day: "numeric",
+        }).format(d);
+    }
+    return new Intl.DateTimeFormat("fr-FR", {
         month: "short",
         day: "numeric",
         year: "2-digit",

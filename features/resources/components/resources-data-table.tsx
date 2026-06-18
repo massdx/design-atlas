@@ -113,7 +113,7 @@ export function ResourcesDataTable({ rows }: { rows: ResourceRow[] }) {
                             key={r.id}
                             className="border-b border-[#080807]/5 last:border-0 hover:bg-[#080807]/2"
                         >
-                            <TableCell className="py-3">
+                            <TableCell className="py-2">
                                 <div className="flex flex-col gap-0.5">
                                     <span className="text-[13px] font-medium text-[#080807]">
                                         {r.title}
@@ -130,10 +130,10 @@ export function ResourcesDataTable({ rows }: { rows: ResourceRow[] }) {
                                     </a>
                                 </div>
                             </TableCell>
-                            <TableCell className="py-3 text-[13px] text-[#080807]/70">
+                            <TableCell className="py-2 text-[13px] text-[#080807]/70">
                                 {r.category?.name ?? "—"}
                             </TableCell>
-                            <TableCell className="py-3">
+                            <TableCell className="py-2">
                                 <span className="inline-flex items-center gap-2 text-[12px] text-[#080807]/80">
                                     <span
                                         className={cn(
@@ -144,13 +144,13 @@ export function ResourcesDataTable({ rows }: { rows: ResourceRow[] }) {
                                     {STATUS_LABEL[r.status]}
                                 </span>
                             </TableCell>
-                            <TableCell className="py-3 text-[12px] text-[#080807]/60">
+                            <TableCell className="py-2 text-[12px] text-[#080807]/60">
                                 {r.submittedByEmail ?? "anonyme"}
                             </TableCell>
-                            <TableCell className={`py-3 ${ADMIN_META_CLASS}`}>
+                            <TableCell className={`py-2 ${ADMIN_META_CLASS}`}>
                                 {dateFormatter.format(new Date(r.createdAt))}
                             </TableCell>
-                            <TableCell className="py-3 text-right">
+                            <TableCell className="py-2 text-right">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button
@@ -163,7 +163,7 @@ export function ResourcesDataTable({ rows }: { rows: ResourceRow[] }) {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent
                                         align="end"
-                                        className="w-40 rounded-none border-0 bg-[#F5F5F5] shadow-2xs"
+                                        className="w-40 rounded-none border-0  shadow"
                                     >
                                         <DropdownMenuItem
                                             disabled={r.status === "approved"}

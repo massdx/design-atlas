@@ -9,25 +9,42 @@ import { headers } from "next/headers";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-async function buildSignInUrl() {
+async function appOrigin() {
     const h = await headers();
     const host = h.get("x-forwarded-host") ?? h.get("host");
     const proto = h.get("x-forwarded-proto") ?? "https";
-    if (!host) return "/manager/sign-in";
-    return `${proto}://${host}/manager/sign-in`;
+    return host ? `${proto}://${host}` : "";
 }
 
-export async function inviteAdmin(rawEmail: string, rawName?: string) {
+// Appel direct à l'API Neon Auth sans propager/écrire les cookies de session :
+// on évite ainsi que la création du compte ne reconnecte l'admin courant en
+// tant que nouvel utilisateur.
+async function neonAuthFetch(path: string, body: Record<string, unknown>) {
+    const base = process.env.NEON_AUTH_BASE_URL!;
+    const url = new URL(path, base.endsWith("/") ? base : `${base}/`);
+    const res = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Origin: await appOrigin(),
+            "x-neon-auth-proxy": "nextjs",
+        },
+        body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => null);
+    return { ok: res.ok, data };
+}
+
+export async function inviteAdmin(rawEmail: string, rawName: string) {
     try {
         const admin = await getAdmin();
         if (!admin.ok) return { error: admin.error };
 
         const email = rawEmail.trim().toLowerCase();
-        const name = rawName?.trim() || null;
+        const name = rawName.trim();
         if (!email) return { error: "Email requis" };
         if (!EMAIL_RE.test(email)) return { error: "Email invalide" };
-
-        const signInUrl = await buildSignInUrl();
+        if (!name) return { error: "Nom requis" };
 
         const existing = await db
             .select()
@@ -35,34 +52,50 @@ export async function inviteAdmin(rawEmail: string, rawName?: string) {
             .where(eq(users.email, email))
             .limit(1);
 
-        if (existing.length > 0) {
-            const row = existing[0];
-            if (row.isAdmin) return { error: "Cet email est déjà admin" };
-            const [restored] = await db
-                .update(users)
-                .set({ isAdmin: true, name: name ?? row.name })
-                .where(eq(users.id, row.id))
-                .returning();
-            revalidatePath("/manager/admins");
-            return { id: restored.id, email: restored.email, signInUrl };
+        if (existing.length > 0 && existing[0].isAdmin) {
+            return { error: "Cet email est déjà admin" };
         }
 
-        const [created] = await db
-            .insert(users)
-            .values({
-                authUserId: `invite:${crypto.randomUUID()}`,
+        if (existing.length > 0) {
+            await db
+                .update(users)
+                .set({ isAdmin: true, name })
+                .where(eq(users.id, existing[0].id));
+        } else {
+            const signUp = await neonAuthFetch("sign-up/email", {
+                email,
+                password: crypto.randomUUID() + crypto.randomUUID(),
+                name,
+            });
+
+            const authUserId = signUp.data?.user?.id;
+            if (!signUp.ok || !authUserId) {
+                const message =
+                    signUp.data?.message ??
+                    signUp.data?.error?.message ??
+                    "Échec de la création du compte";
+                return { error: message };
+            }
+
+            await db.insert(users).values({
+                authUserId,
                 email,
                 name,
                 isAdmin: true,
-            })
-            .returning();
+            });
+        }
+
+        const reset = await neonAuthFetch("request-password-reset", {
+            email,
+            redirectTo: `${await appOrigin()}/manager/reset-password`,
+        });
 
         revalidatePath("/manager/admins");
-        return { id: created.id, email: created.email, signInUrl };
+        return { email, emailSent: reset.ok };
     } catch (err) {
         console.error("[inviteAdmin] failed:", err);
         return {
-            error: err instanceof Error ? err.message : "Échec de l'invitation",
+            error: err instanceof Error ? err.message : "Échec de la création",
         };
     }
 }

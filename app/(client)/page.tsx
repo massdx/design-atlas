@@ -3,7 +3,7 @@ import { CategoryFilters } from "@/features/categories/components/category-filte
 import { listCategories } from "@/features/categories/queries";
 import { Hero } from "@/features/home/components/hero";
 import { SearchBar } from "@/features/home/components/search-bar";
-import { SiteHeader } from "@/features/home/components/site-header";
+import { Navbar } from "@/features/home/components/navbar";
 import { ResourcesList } from "@/features/resources/components/resources-list";
 import { ResourcesListSkeleton } from "@/features/resources/components/resources-list-skeleton";
 import { listResources } from "@/features/resources/queries";
@@ -30,8 +30,8 @@ export default async function Page({
 
   return (
     <main className="relative   max-w-220 mx-auto">
-      {/* <DecorativeBlobs /> */}
-      <SiteHeader categories={categories} />
+    
+      <Navbar categories={categories} />
       <Hero />
       <StaggerIn delay={0.25} step={0.09}>
         <SearchBar

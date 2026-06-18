@@ -59,7 +59,7 @@ export function ResourcesFilters() {
                 <SelectTrigger className={`${ADMIN_SELECT_TRIGGER_CLASS} w-36`}>
                     <SelectValue placeholder="Statut" />
                 </SelectTrigger>
-                <SelectContent className="rounded-none border-0 bg-[#F5F5F5] shadow-2xs">
+                <SelectContent className="rounded-none border-0 bg-[#F5F5F5] shadow ">
                     {STATUS_OPTIONS.map((o) => (
                         <SelectItem
                             key={o.value}

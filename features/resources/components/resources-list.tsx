@@ -84,11 +84,11 @@ export function ResourcesList({
         <section>
             <div className="relative z-10 mx-auto mt-10 px-6">
                 <p className="font-(--font-dm-mono) text-[12px] uppercase tracking-wider text-[#938F8A]">
-                    Browse ({String(total).padStart(4, "0")}) resources_
+                    Parcourez ({String(total).padStart(3, "0")}) ressources
                 </p>
             </div>
 
-            <div className="relative z-10 mx-auto mt-4 px-6 pb-24">
+            <div className="relative z-10 mx-auto mt-2.5 px-6 pb-24">
                 <ul
                     ref={rootRef}
                     className="group/list divide-y divide-[#080807]/5"

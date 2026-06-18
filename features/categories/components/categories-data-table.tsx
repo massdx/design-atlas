@@ -79,7 +79,7 @@ export function CategoriesDataTable({
                                 key={c.id}
                                 className="border-b border-[#080807]/5 last:border-0 hover:bg-[#080807]/2"
                             >
-                                <TableCell className="py-3 text-[13px] text-[#080807]">
+                                <TableCell className="py-2 text-[13px] text-[#080807]">
                                     <span className="inline-flex items-center gap-2">
                                         <span
                                             aria-hidden
@@ -89,20 +89,22 @@ export function CategoriesDataTable({
                                         {c.name}
                                     </span>
                                 </TableCell>
-                                <TableCell className="py-3">
+                                <TableCell className="py-2">
                                     <span className={ADMIN_META_CLASS}>
                                         {c.resourceCount}
                                     </span>
                                 </TableCell>
-                                <TableCell className="py-3">
+                                <TableCell className="py-2">
                                     <span className={ADMIN_META_CLASS}>
                                         {new Date(c.createdAt).toLocaleDateString("fr-FR")}
                                     </span>
                                 </TableCell>
-                                <TableCell className="py-3 text-right">
+                                <TableCell className="py-2 text-right">
                                     <div className="flex justify-end gap-2">
                                         <Button
                                             type="button"
+                                            variant="default"
+                                            size="sm"
                                             onClick={() => setRenaming(c)}
                                             className={ADMIN_BUTTON_OUTLINE_CLASS}
                                         >
@@ -110,8 +112,10 @@ export function CategoriesDataTable({
                                         </Button>
                                         <Button
                                             type="button"
+                                            variant="destructive"
+                                                size="sm"
                                             onClick={() => setDeleting(c)}
-                                            className="inline-flex h-9 items-center gap-1.5 rounded-none border-0 bg-[#F5F5F5] px-3 text-[12px] font-medium text-red-600 shadow-2xs transition-colors hover:bg-red-600/10"
+                                            className=""
                                         >
                                             Supprimer
                                         </Button>
