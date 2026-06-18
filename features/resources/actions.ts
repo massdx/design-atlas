@@ -278,6 +278,45 @@ export async function createResourceAsAdmin(formData: FormData) {
     }
 }
 
+export async function updateResource(formData: FormData) {
+    try {
+        const admin = await getAdmin();
+        if (!admin.ok) return { error: admin.error };
+
+        const id = String(formData.get("id") ?? "").trim();
+        const title = String(formData.get("title") ?? "").trim();
+        const description = String(formData.get("description") ?? "").trim();
+        const categoryId = String(formData.get("categoryId") ?? "").trim();
+
+        if (!id) return { error: "Resource id is required" };
+        if (!title) return { error: "Title is required" };
+
+        const [existing] = await db
+            .select({ id: resources.id })
+            .from(resources)
+            .where(eq(resources.id, id))
+            .limit(1);
+        if (!existing) return { error: "Resource not found" };
+
+        await db
+            .update(resources)
+            .set({
+                title,
+                description: description || null,
+                categoryId: categoryId || null,
+                updatedAt: new Date(),
+            })
+            .where(eq(resources.id, id));
+
+        revalidatePath("/manager");
+        revalidatePath("/");
+        return { success: true };
+    } catch (err) {
+        console.error("[updateResource] failed:", err);
+        return { error: errorMessage(err, "Failed to update resource") };
+    }
+}
+
 export async function approveResource(id: string) {
     try {
         const admin = await getAdmin();
