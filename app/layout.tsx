@@ -1,4 +1,4 @@
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 import { DM_Mono, Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 
 import { ThemeProvider } from "@/components/theme-provider";
@@ -49,12 +49,21 @@ export const metadata: Metadata = {
     siteName,
     title: "Design Atlas — Ressources utiles pour les créateurs du web",
     description: siteDescription,
+    images: [
+      {
+        url: "/open-graph.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Design Atlas — Ressources utiles pour les créateurs du web",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Design Atlas — Ressources utiles pour les créateurs du web",
     description: siteDescription,
     creator: "@designatlas",
+    images: ["/open-graph.jpg"],
   },
   robots: {
     index: true,
