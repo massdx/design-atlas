@@ -54,16 +54,16 @@ export function Hero() {
     }, []);
 
     return (
-        <section className="relative z-10 mx-auto flex  flex-col items-start gap-3 px-6 pt-20">
+        <section className="relative z-10 mx-auto flex  flex-col items-start gap-3 px-6 pt-14 sm:pt-20">
             <h1
                 ref={titleRef}
-                className="font-serif overflow-hidden text-[45px] max-w-lg  leading-[115%] tracking-tight"
+                className="font-serif overflow-hidden text-[34px] sm:text-[45px] max-w-lg  leading-[115%] tracking-tight"
             >
-                Ressources utiles pour les {" "} <br/>
+                Ressources utiles pour les {" "} <br className="hidden sm:block" />
                 <span className="italic">créateurs du web</span>
             </h1>
-            <p ref={subRef} className="text-[14px] font-normal max-w-sm  text-[#080807]">
-                Sélectionnées et partagées par des designers,<br/> pour des designers.
+            <p ref={subRef} className="text-[13px] sm:text-[14px] font-normal max-w-sm  text-[#080807]">
+                Sélectionnées et partagées par des designers,<br className="hidden sm:block" /> pour des designers.
             </p>
         </section>
     );
