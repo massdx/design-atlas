@@ -29,13 +29,14 @@ import {
     ADMIN_TEXTAREA_CLASS,
 } from "@/features/admin/components/admin-styles";
 import { updateResource } from "@/features/resources/actions";
+import { TagInput } from "@/features/resources/components/submit/tag-input";
 import type { ResourceRow } from "@/features/resources/queries";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 type Category = { id: string; name: string };
 
-const DESC_MAX = 180;
+const DESC_MAX = 200;
 
 const NO_CATEGORY = "__none__";
 
@@ -53,6 +54,7 @@ export function EditResourceDialog({
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [categoryId, setCategoryId] = useState<string>(NO_CATEGORY);
+    const [tags, setTags] = useState<string[]>([]);
     const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
@@ -60,6 +62,7 @@ export function EditResourceDialog({
             setTitle(resource.title);
             setDescription(resource.description ?? "");
             setCategoryId(resource.category?.id ?? NO_CATEGORY);
+            setTags(resource.tags ?? []);
         }
     }, [resource]);
 
@@ -72,6 +75,7 @@ export function EditResourceDialog({
             "categoryId",
             categoryId === NO_CATEGORY ? "" : categoryId,
         );
+        formData.set("tags", tags.join(","));
         startTransition(async () => {
             const res = await updateResource(formData);
             if (res?.error) {
@@ -157,6 +161,14 @@ export function EditResourceDialog({
                                 ))}
                             </SelectContent>
                         </Select>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label className={ADMIN_LABEL_CLASS}>Tags</Label>
+                        <TagInput value={tags} onChange={setTags} />
+                        <p className="font-mono text-[10px] uppercase tracking-wider text-[#080807]/40">
+                            Facilite la recherche · 10 max
+                        </p>
                     </div>
 
                     <DialogFooter>

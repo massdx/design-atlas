@@ -15,6 +15,14 @@ function errorMessage(err: unknown, fallback: string) {
     return err instanceof Error ? err.message : fallback;
 }
 
+function parseTags(raw: string) {
+    return raw
+        .split(",")
+        .map((t) => t.trim().toLowerCase())
+        .filter((t, i, arr) => t.length > 0 && arr.indexOf(t) === i)
+        .slice(0, 10);
+}
+
 export type UrlMetadata = {
     title: string;
     description: string;
@@ -153,13 +161,7 @@ export async function submitResource(formData: FormData) {
         const imageUrl = String(formData.get("imageUrl") ?? "").trim();
         const submittedByEmail = String(formData.get("email") ?? "").trim();
         const tagsRaw = String(formData.get("tags") ?? "").trim();
-        const tags = tagsRaw
-            ? tagsRaw
-                .split(",")
-                .map((t) => t.trim().toLowerCase())
-                .filter((t, i, arr) => t.length > 0 && arr.indexOf(t) === i)
-                .slice(0, 10)
-            : [];
+        const tags = tagsRaw ? parseTags(tagsRaw) : [];
 
         if (!title) return { error: "Title is required" };
         if (!url) return { error: "URL is required" };
@@ -212,6 +214,8 @@ export async function createResourceAsAdmin(formData: FormData) {
 
         if (!title) return { error: "Title is required" };
 
+        const tags = parseTags(String(formData.get("tags") ?? "").trim());
+
         if (imageUrl) {
             try {
                 new URL(imageUrl);
@@ -263,6 +267,7 @@ export async function createResourceAsAdmin(formData: FormData) {
             description: description || null,
             categoryId: categoryId || null,
             imageUrl: imageUrl || null,
+            tags,
             submittedByEmail: moderator.email,
             status: "approved",
             reviewedBy: moderator.id,
@@ -287,6 +292,7 @@ export async function updateResource(formData: FormData) {
         const title = String(formData.get("title") ?? "").trim();
         const description = String(formData.get("description") ?? "").trim();
         const categoryId = String(formData.get("categoryId") ?? "").trim();
+        const tags = parseTags(String(formData.get("tags") ?? "").trim());
 
         if (!id) return { error: "Resource id is required" };
         if (!title) return { error: "Title is required" };
@@ -304,6 +310,7 @@ export async function updateResource(formData: FormData) {
                 title,
                 description: description || null,
                 categoryId: categoryId || null,
+                tags,
                 updatedAt: new Date(),
             })
             .where(eq(resources.id, id));

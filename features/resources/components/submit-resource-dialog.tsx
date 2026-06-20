@@ -39,6 +39,7 @@ export function SubmitResourceDialog({
     const [imageUrl, setImageUrl] = useState("");
     const [categoryId, setCategoryId] = useState("");
     const [tags, setTags] = useState<string[]>([]);
+    const [email, setEmail] = useState("");
 
     const [isFetching, startFetching] = useTransition();
     const [isPending, startTransition] = useTransition();
@@ -52,6 +53,7 @@ export function SubmitResourceDialog({
         setImageUrl("");
         setCategoryId("");
         setTags([]);
+        setEmail("");
     }, [open]);
 
     function handleFetchAndNext() {
@@ -88,6 +90,11 @@ export function SubmitResourceDialog({
             toast.error("Choisis une catégorie");
             return;
         }
+        const trimmedEmail = email.trim();
+        if (trimmedEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+            toast.error("Email invalide");
+            return;
+        }
         const formData = new FormData();
         formData.set("categoryId", categoryId);
         formData.set("title", title.trim());
@@ -95,6 +102,7 @@ export function SubmitResourceDialog({
         formData.set("description", description.trim());
         formData.set("imageUrl", imageUrl.trim());
         formData.set("tags", tags.join(","));
+        formData.set("email", trimmedEmail);
 
         startTransition(async () => {
             const res = await submitResource(formData);
@@ -121,7 +129,7 @@ export function SubmitResourceDialog({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{trigger ?? fallbackTrigger}</DialogTrigger>
-            <DialogContent className="h-full border-0 bg-transparent p-0 shadow-none sm:max-w-2xl">
+            <DialogContent className="h-full border-0 bg-transparent p-0 shadow-none sm:max-w-4xl">
                 <div className="py-12">
                     <AnimatePresence mode="popLayout" initial>
                         {step === "url" && (
@@ -141,11 +149,13 @@ export function SubmitResourceDialog({
                                 categories={categories}
                                 categoryId={categoryId}
                                 tags={tags}
+                                email={email}
                                 isSubmitting={isPending}
                                 onTitleChange={setTitle}
                                 onDescriptionChange={setDescription}
                                 onCategoryChange={setCategoryId}
                                 onTagsChange={setTags}
+                                onEmailChange={setEmail}
                                 onBack={() => setStep("url")}
                                 onSubmit={handleSubmit}
                             />

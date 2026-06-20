@@ -139,6 +139,18 @@ export function ResourcesDataTable({
                                             ? `Fichier · ${decodeURIComponent(r.url.split("/").pop() ?? "").replace(/^\d+-[a-f0-9-]+-/i, "")}`
                                             : r.url}
                                     </a>
+                                    {r.tags.length > 0 && (
+                                        <div className="mt-1 flex flex-wrap gap-1">
+                                            {r.tags.map((tag) => (
+                                                <span
+                                                    key={tag}
+                                                    className="bg-[#080807]/5 px-1.5 py-0.5 font-mono text-[10px] lowercase tracking-wide text-[#080807]/70"
+                                                >
+                                                    #{tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             </TableCell>
                             <TableCell className="py-2 text-[13px] text-[#080807]/70">
