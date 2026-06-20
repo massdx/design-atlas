@@ -1,6 +1,6 @@
 import { categories } from "@/features/categories/schema";
 import { db } from "@/lib/db";
-import { and, count, desc, eq, ilike, or, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 import { resources } from "./schema";
 
 export type ResourceStatus = "pending" | "approved" | "rejected" | "all";
@@ -12,6 +12,7 @@ export type ResourceRow = {
     type: "external" | "file";
     description: string | null;
     imageUrl: string | null;
+    tags: string[];
     status: "pending" | "approved" | "rejected";
     submittedByEmail: string | null;
     createdAt: Date;
@@ -42,6 +43,7 @@ export async function listResources({
             ilike(resources.title, term),
             ilike(resources.url, term),
             ilike(resources.description, term),
+            sql`EXISTS (SELECT 1 FROM unnest(${resources.tags}) AS tag WHERE tag ILIKE ${term})`,
         );
         if (searchFilter) filters.push(searchFilter);
     }
@@ -61,6 +63,7 @@ export async function listResources({
                 status: resources.status,
                 submittedByEmail: resources.submittedByEmail,
                 createdAt: resources.createdAt,
+                tags: resources.tags,
                 category: {
                     id: categories.id,
                     name: categories.name,

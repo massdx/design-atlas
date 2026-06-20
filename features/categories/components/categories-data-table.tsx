@@ -8,7 +8,14 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/custom-dialog";
+} from "@/components/ui/dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -33,8 +40,15 @@ import {
     updateCategory,
 } from "@/features/categories/actions";
 import type { CategoryWithCount } from "@/features/categories/queries";
-import { categoryColor } from "@/lib/dot-color";
-import { useState, useTransition } from "react";
+import { CATEGORY_PALETTE, categoryColor } from "@/lib/dot-color";
+import { cn } from "@/lib/utils";
+import {
+    CheckIcon,
+    DotsHorizontalIcon,
+    Pencil1Icon,
+    TrashIcon,
+} from "@radix-ui/react-icons";
+import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 export function CategoriesDataTable({
@@ -43,6 +57,7 @@ export function CategoriesDataTable({
     categories: CategoryWithCount[];
 }) {
     const [renaming, setRenaming] = useState<CategoryWithCount | null>(null);
+    const [recoloring, setRecoloring] = useState<CategoryWithCount | null>(null);
     const [deleting, setDeleting] = useState<CategoryWithCount | null>(null);
 
     if (categories.length === 0) {
@@ -100,26 +115,46 @@ export function CategoriesDataTable({
                                     </span>
                                 </TableCell>
                                 <TableCell className="py-2 text-right">
-                                    <div className="flex justify-end gap-2">
-                                        <Button
-                                            type="button"
-                                            variant="default"
-                                            size="sm"
-                                            onClick={() => setRenaming(c)}
-                                            className={ADMIN_BUTTON_OUTLINE_CLASS}
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button
+                                                type="button"
+                                                className="inline-flex size-8 items-center justify-center rounded-none border-0 bg-transparent p-0 text-[#080807] hover:bg-[#080807]/10"
+                                            >
+                                                <DotsHorizontalIcon className="size-3.5" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent
+                                            align="end"
+                                            className="w-40 rounded-none border-0 shadow"
                                         >
-                                            Renommer
-                                        </Button>
-                                        <Button
-                                            type="button"
-                                            variant="destructive"
-                                                size="sm"
-                                            onClick={() => setDeleting(c)}
-                                            className=""
-                                        >
-                                            Supprimer
-                                        </Button>
-                                    </div>
+                                            <DropdownMenuItem
+                                                className="rounded-none text-[12px] focus:bg-[#080807]/5 focus:text-[#080807]"
+                                                onClick={() => setRenaming(c)}
+                                            >
+                                                <Pencil1Icon className="size-3.5" /> Renommer
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                className="rounded-none text-[12px] focus:bg-[#080807]/5 focus:text-[#080807]"
+                                                onClick={() => setRecoloring(c)}
+                                            >
+                                                <span
+                                                    aria-hidden
+                                                    className="inline-block size-3.5 shrink-0 rounded-full"
+                                                    style={{ backgroundColor: categoryColor(c) }}
+                                                />{" "}
+                                                Couleur
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator className="bg-[#080807]/10" />
+                                            <DropdownMenuItem
+                                                variant="destructive"
+                                                className="rounded-none text-[12px] focus:bg-red-600/10"
+                                                onClick={() => setDeleting(c)}
+                                            >
+                                                <TrashIcon className="size-3.5" /> Supprimer
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -130,6 +165,11 @@ export function CategoriesDataTable({
             <RenameDialog
                 category={renaming}
                 onClose={() => setRenaming(null)}
+            />
+            <ColorDialog
+                category={recoloring}
+                categories={categories}
+                onClose={() => setRecoloring(null)}
             />
             <DeleteDialog
                 category={deleting}
@@ -166,14 +206,13 @@ function RenameDialog({
             return;
         }
         startTransition(async () => {
-            const res = await updateCategory(category.id, trimmed);
+            const res = await updateCategory(category.id, trimmed, category.color);
             if ("error" in res) {
                 toast.error(res.error);
                 return;
             }
             toast.success(`Renommée en « ${res.name} »`);
-            setName("");
-            onClose();
+            handleOpenChange(false);
         });
     }
 
@@ -181,7 +220,9 @@ function RenameDialog({
         <Dialog
             open={open}
             onOpenChange={(next) => {
-                if (next && category) setName(category.name);
+                if (next && category) {
+                    setName(category.name);
+                }
                 handleOpenChange(next);
             }}
         >
@@ -212,6 +253,130 @@ function RenameDialog({
                         disabled={isPending}
                         className={ADMIN_INPUT_CLASS}
                     />
+                </div>
+                <DialogFooter>
+                    <Button
+                        type="button"
+                        onClick={() => handleOpenChange(false)}
+                        disabled={isPending}
+                        className={ADMIN_BUTTON_OUTLINE_CLASS}
+                    >
+                        Annuler
+                    </Button>
+                    <Button
+                        type="button"
+                        onClick={submit}
+                        disabled={isPending}
+                        className={ADMIN_BUTTON_PRIMARY_CLASS}
+                    >
+                        {isPending ? "Enregistrement..." : "Enregistrer"}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function ColorDialog({
+    category,
+    categories,
+    onClose,
+}: {
+    category: CategoryWithCount | null;
+    categories: CategoryWithCount[];
+    onClose: () => void;
+}) {
+    const [color, setColor] = useState<string | null>(null);
+    const [isPending, startTransition] = useTransition();
+
+    const open = !!category;
+
+    const taken = useMemo(
+        () =>
+            new Set(
+                categories
+                    .filter((c) => c.id !== category?.id && c.color)
+                    .map((c) => c.color as string),
+            ),
+        [categories, category?.id],
+    );
+
+    function handleOpenChange(next: boolean) {
+        if (!next) {
+            onClose();
+            setColor(null);
+        }
+    }
+
+    function submit() {
+        if (!category) return;
+        if (color === category.color) {
+            handleOpenChange(false);
+            return;
+        }
+        startTransition(async () => {
+            const res = await updateCategory(category.id, category.name, color);
+            if ("error" in res) {
+                toast.error(res.error);
+                return;
+            }
+            toast.success(`Couleur de « ${res.name} » mise à jour`);
+            handleOpenChange(false);
+        });
+    }
+
+    return (
+        <Dialog
+            open={open}
+            onOpenChange={(next) => {
+                if (next && category) {
+                    setColor(category.color);
+                }
+                handleOpenChange(next);
+            }}
+        >
+            <DialogContent className={ADMIN_DIALOG_CONTENT_CLASS}>
+                <DialogHeader>
+                    <DialogTitle className="font-serif text-[22px] leading-none">
+                        Couleur de la catégorie
+                    </DialogTitle>
+                    <DialogDescription className="text-[12px] text-[#080807]/60">
+                        Une couleur déjà utilisée n’est pas disponible.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-2">
+                    <Label className={ADMIN_LABEL_CLASS}>Couleur</Label>
+                    <div className="flex flex-wrap gap-2">
+                        {CATEGORY_PALETTE.map((c) => {
+                            const isTaken = taken.has(c);
+                            const active = color === c;
+                            return (
+                                <button
+                                    key={c}
+                                    type="button"
+                                    onClick={() =>
+                                        !isTaken && setColor(active ? null : c)
+                                    }
+                                    disabled={isTaken || isPending}
+                                    aria-label={c}
+                                    aria-pressed={active}
+                                    className={cn(
+                                        "relative size-7 rounded-full transition-transform",
+                                        !isTaken && "hover:scale-110",
+                                        isTaken &&
+                                        "cursor-not-allowed opacity-30 grayscale",
+                                        active &&
+                                        "ring-2 ring-[#080807] ring-offset-2 ring-offset-[#E8E8E3]",
+                                    )}
+                                    style={{ backgroundColor: c }}
+                                >
+                                    {active && (
+                                        <CheckIcon className="absolute inset-0 m-auto size-4 text-white" />
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
                 <DialogFooter>
                     <Button

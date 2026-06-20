@@ -1,7 +1,7 @@
 import type { Variants } from "motion/react";
 
 export const MAX_TAGS = 10;
-export const DESC_MAX = 180;
+export const DESC_MAX = 200;
 
 export const FIELD_TRANSITION = {
     type: "spring" as const,
