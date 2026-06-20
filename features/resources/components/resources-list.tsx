@@ -130,14 +130,14 @@ export function ResourcesList({
                             width: 250,
                             height: "auto",
                         }}
-                        className="pointer-events-none fixed left-0 top-0 z-50 overflow-hidden   shadow-[0_30px_80px_-20px_rgba(8,8,7,0.35)] ring-1 ring-black/5"
+                        className="pointer-events-none fixed left-0 top-0 z-50 overflow-hidden bg-white  shadow-[0_30px_80px_-20px_rgba(8,8,7,0.35)] ring-1 ring-black/5"
                     >
                         {previewSrc && (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                                 src={previewSrc}
                                 alt=""
-                                className="block h-auto w-full object-contain"
+                                className="block h-auto w-full bg-white object-contain"
                                 draggable={false}
                             />
                         )}

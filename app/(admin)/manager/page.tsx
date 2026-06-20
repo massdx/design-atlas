@@ -79,7 +79,13 @@ export default async function ManagerPage({
         <ResourcesFilters />
       </div>
 
-      <ResourcesDataTable rows={rows} />
+      <ResourcesDataTable
+        rows={rows}
+        categories={categories.map((c) => ({
+          id: c.id,
+          name: c.name,
+        }))}
+      />
 
       <Pagination
         page={page}

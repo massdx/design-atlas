@@ -35,6 +35,7 @@ import {
     fetchUrlMetadata,
 } from "@/features/resources/actions";
 import { CoverPreview } from "@/features/resources/components/submit/cover-preview";
+import { TagInput } from "@/features/resources/components/submit/tag-input";
 import { useMounted } from "@/hooks/use-mounted";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { Loader } from "lucide-react";
@@ -43,7 +44,7 @@ import { toast } from "sonner";
 
 type Category = { id: string; name: string };
 
-const DESC_MAX = 180;
+const DESC_MAX = 200;
 
 export function CreateResourceDialog({
     categories,
@@ -61,6 +62,7 @@ export function CreateResourceDialog({
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [imageUrl, setImageUrl] = useState("");
+    const [tags, setTags] = useState<string[]>([]);
     const [isFetching, setIsFetching] = useState(false);
     const [isPending, startTransition] = useTransition();
     const lastFetchedUrl = useRef<string>("");
@@ -99,12 +101,14 @@ export function CreateResourceDialog({
         setTitle("");
         setDescription("");
         setImageUrl("");
+        setTags([]);
         lastFetchedUrl.current = "";
     }
 
     function onSubmit(formData: FormData) {
         formData.set("title", title);
         formData.set("description", description);
+        formData.set("tags", tags.join(","));
         if (categoryId) formData.set("categoryId", categoryId);
         formData.set("type", resourceType);
         if (resourceType === "external") {
@@ -296,6 +300,14 @@ export function CreateResourceDialog({
                                 )}
                             </SelectContent>
                         </Select>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label className={ADMIN_LABEL_CLASS}>Tags</Label>
+                        <TagInput value={tags} onChange={setTags} />
+                        <p className="font-mono text-[10px] uppercase tracking-wider text-[#080807]/40">
+                            Facilite la recherche · 10 max
+                        </p>
                     </div>
 
                     <DialogFooter>

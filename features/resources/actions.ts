@@ -15,6 +15,14 @@ function errorMessage(err: unknown, fallback: string) {
     return err instanceof Error ? err.message : fallback;
 }
 
+function parseTags(raw: string) {
+    return raw
+        .split(",")
+        .map((t) => t.trim().toLowerCase())
+        .filter((t, i, arr) => t.length > 0 && arr.indexOf(t) === i)
+        .slice(0, 10);
+}
+
 export type UrlMetadata = {
     title: string;
     description: string;
@@ -153,13 +161,7 @@ export async function submitResource(formData: FormData) {
         const imageUrl = String(formData.get("imageUrl") ?? "").trim();
         const submittedByEmail = String(formData.get("email") ?? "").trim();
         const tagsRaw = String(formData.get("tags") ?? "").trim();
-        const tags = tagsRaw
-            ? tagsRaw
-                .split(",")
-                .map((t) => t.trim().toLowerCase())
-                .filter((t, i, arr) => t.length > 0 && arr.indexOf(t) === i)
-                .slice(0, 10)
-            : [];
+        const tags = tagsRaw ? parseTags(tagsRaw) : [];
 
         if (!title) return { error: "Title is required" };
         if (!url) return { error: "URL is required" };
@@ -212,6 +214,8 @@ export async function createResourceAsAdmin(formData: FormData) {
 
         if (!title) return { error: "Title is required" };
 
+        const tags = parseTags(String(formData.get("tags") ?? "").trim());
+
         if (imageUrl) {
             try {
                 new URL(imageUrl);
@@ -263,6 +267,7 @@ export async function createResourceAsAdmin(formData: FormData) {
             description: description || null,
             categoryId: categoryId || null,
             imageUrl: imageUrl || null,
+            tags,
             submittedByEmail: moderator.email,
             status: "approved",
             reviewedBy: moderator.id,
@@ -275,6 +280,47 @@ export async function createResourceAsAdmin(formData: FormData) {
     } catch (err) {
         console.error("[createResourceAsAdmin] failed:", err);
         return { error: errorMessage(err, "Failed to create resource") };
+    }
+}
+
+export async function updateResource(formData: FormData) {
+    try {
+        const admin = await getAdmin();
+        if (!admin.ok) return { error: admin.error };
+
+        const id = String(formData.get("id") ?? "").trim();
+        const title = String(formData.get("title") ?? "").trim();
+        const description = String(formData.get("description") ?? "").trim();
+        const categoryId = String(formData.get("categoryId") ?? "").trim();
+        const tags = parseTags(String(formData.get("tags") ?? "").trim());
+
+        if (!id) return { error: "Resource id is required" };
+        if (!title) return { error: "Title is required" };
+
+        const [existing] = await db
+            .select({ id: resources.id })
+            .from(resources)
+            .where(eq(resources.id, id))
+            .limit(1);
+        if (!existing) return { error: "Resource not found" };
+
+        await db
+            .update(resources)
+            .set({
+                title,
+                description: description || null,
+                categoryId: categoryId || null,
+                tags,
+                updatedAt: new Date(),
+            })
+            .where(eq(resources.id, id));
+
+        revalidatePath("/manager");
+        revalidatePath("/");
+        return { success: true };
+    } catch (err) {
+        console.error("[updateResource] failed:", err);
+        return { error: errorMessage(err, "Failed to update resource") };
     }
 }
 

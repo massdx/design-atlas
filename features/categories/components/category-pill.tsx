@@ -28,7 +28,7 @@ export function CategoryPill({ href, label, active, dot }: CategoryPillProps) {
             {dot && (
                 <span
                     aria-hidden
-                    className="inline-block size-[7px] shadow-2xs rounded-full"
+                    className="inline-block size-[7px] shadow-2x shadow-2xs rounded-full"
                     style={{ backgroundColor: dot }}
                 />
             )}

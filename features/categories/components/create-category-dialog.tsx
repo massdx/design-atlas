@@ -146,7 +146,7 @@ export function CreateCategoryDialog({
                                         style={{ backgroundColor: c }}
                                     >
                                         {active && (
-                                            <CheckIcon className="absolute inset-0 m-auto size-4 text-[#080807]" />
+                                            <CheckIcon className="absolute inset-0 m-auto size-4 text-white" />
                                         )}
                                     </button>
                                 );

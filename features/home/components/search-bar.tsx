@@ -70,7 +70,7 @@ export function SearchBar({
                     name="q"
                     value={value}
                     onChange={handleChange}
-                    placeholder="Rechercher ici..."
+                    placeholder="Rechercher par titre, tag..."
                     className="h-10   shadow-2xs  w-full rounded-none border-none bg-[#F5F5F5] pl-6 pr-3 text-[13px]  placeholder:text-[#757575] focus:outline-none focus:ring-1 focus:ring-[#080807]/20"
                 />
                 {keepCategoryId && (
