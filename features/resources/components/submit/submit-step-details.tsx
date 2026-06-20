@@ -2,9 +2,10 @@
 
 import { DialogTitle } from "@/components/ui/custom-dialog";
 import { useTapHaptic } from "@/hooks/use-tap-haptic";
-import { Link2Icon } from "@radix-ui/react-icons";
+import { ImageIcon, Link2Icon } from "@radix-ui/react-icons";
 import { Loader } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
 import { AnimatedField } from "./animated-field";
 import { CategoryPicker, type Category } from "./category-picker";
 import { DESC_MAX, STAGGER_CONTAINER } from "./constants";
@@ -48,6 +49,16 @@ export function SubmitStepDetails({
     onSubmit: () => void;
 }) {
     const tap = useTapHaptic();
+    const [anonymous, setAnonymous] = useState(!email.trim());
+
+    function toggleAnonymous() {
+        tap();
+        setAnonymous((prev) => {
+            const next = !prev;
+            if (next) onEmailChange("");
+            return next;
+        });
+    }
     return (
         <motion.div
             key="details"
@@ -74,10 +85,9 @@ export function SubmitStepDetails({
                 </p>
             </AnimatedField>
 
-            <div className=" flex w-full   items-start justify-center gap-6  ">
-                <AnimatePresence>
-
-                    {imageUrl && (
+            <div className=" flex w-full   items-start justify-start mt-3 gap-6  ">
+                <AnimatePresence mode="wait">
+                    {imageUrl ? (
                         <motion.div
                             key="cover"
                             initial={{ opacity: 0, scaleX: 0.92, filter: "blur(2px)" }}
@@ -87,6 +97,22 @@ export function SubmitStepDetails({
                             className=" translate-y-6 hidden w-72 origin-left shrink-0 self-start md:block"
                         >
                             <CoverPreview src={imageUrl} />
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key="no-cover"
+                            initial={{ opacity: 0, filter: "blur(2px)" }}
+                            animate={{ opacity: 1, filter: "blur(0px)" }}
+                            exit={{ opacity: 0, filter: "blur(2px)" }}
+                            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                            className="translate-y-6 hidden w-72 shrink-0 self-start md:block"
+                        >
+                            <div className="flex aspect-[1.91/1] w-full flex-col items-center justify-center gap-1.5 border border-dashed border-[#080807]/15 bg-[#F5F5F5]/50 text-center">
+                                <ImageIcon className="size-5 text-[#080807]/30" />
+                                <span className="font-mono text-[10px] uppercase tracking-wider text-[#080807]/40">
+                                    Pas de cover
+                                </span>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -135,18 +161,44 @@ export function SubmitStepDetails({
                         <TagInput value={tags} onChange={onTagsChange} />
                     </AnimatedField>
 
-                    <AnimatedField className="grid gap-1.5">
-                        <FieldLabel htmlFor="submit-email">Email (optionnel)</FieldLabel>
-                        <StyledInput
-                            id="submit-email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => onEmailChange(e.target.value)}
-                            placeholder="vous@exemple.com"
-                        />
-                        <p className="font-mono text-[10px] text-[#080807]/40">
-                            Laissez vide pour soumettre anonymement.
-                        </p>
+                    <AnimatedField className="grid gap-2">
+                        <label
+                            htmlFor="submit-anonymous"
+                            className="inline-flex cursor-pointer items-center gap-2 text-[13px] text-[#080807]"
+                        >
+                            <input
+                                id="submit-anonymous"
+                                type="checkbox"
+                                checked={anonymous}
+                                onChange={toggleAnonymous}
+                                className="size-4 cursor-pointer accent-[#080807]"
+                            />
+                            Soumission anonyme
+                        </label>
+
+                        <AnimatePresence initial={false}>
+                            {!anonymous && (
+                                <motion.div
+                                    key="email-field"
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                                    className="overflow-hidden"
+                                >
+                                    <div className="grid gap-1.5 pt-1">
+                                        <FieldLabel htmlFor="submit-email">Email</FieldLabel>
+                                        <StyledInput
+                                            id="submit-email"
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => onEmailChange(e.target.value)}
+                                            placeholder="vous@exemple.com"
+                                        />
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </AnimatedField>
 
                     <AnimatedField className="mt-2 flex items-center justify-between">
