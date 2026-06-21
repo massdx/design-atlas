@@ -1,7 +1,7 @@
 "use client";
 
-import { SubmitResourceDialog } from "@/features/resources/components/submit-resource-dialog";
 import { GITHUB_URL } from "@/features/home/github";
+import { SubmitResourceDialog } from "@/features/resources/components/submit-resource-dialog";
 import { GitHubLogoIcon, PlusIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { useWebHaptics } from "web-haptics/react";
