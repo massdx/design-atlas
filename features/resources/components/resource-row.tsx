@@ -91,14 +91,14 @@ function ResourceRowImpl({
                         className="inline-block size-1.75 shrink-0 rounded-full"
                         style={{ backgroundColor: categoryColor(resource.category) }}
                     />
-                    <span className="min-w-0 max-w-full shrink truncate text-[14px] font-medium leading-7 text-[#080807] transition-colors duration-100 ease-out group-data-active/row:text-[#E8E8E3]">
+                    <span className="shrink-0 whitespace-nowrap text-[14px] font-medium leading-7 text-[#080807] transition-colors duration-100 ease-out group-data-active/row:text-[#E8E8E3]">
                         {resource.title}
                     </span>
                     <span
                         aria-hidden
                         className="hidden size-1 shrink-0 rounded-full bg-[#91918D] transition-colors duration-100 ease-out group-data-active/row:bg-[#E8E8E3]/40 sm:inline-block"
                     />
-                    <span className="hidden truncate font-(--font-dm-mono) text-[14px] leading-7 text-[#080807]/40 transition-colors duration-100 ease-out group-data-active/row:text-[#E8E8E3]/60 sm:inline">
+                    <span className="hidden min-w-0 flex-1 truncate font-(--font-dm-mono) text-[14px] leading-7 text-[#080807]/40 transition-colors duration-100 ease-out group-data-active/row:text-[#E8E8E3]/60 sm:inline">
                         <span className="group-data-active/row:hidden">
                             {resource.description}
                         </span>
