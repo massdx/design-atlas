@@ -91,7 +91,7 @@ function ResourceRowImpl({
                         className="inline-block size-1.75 shrink-0 rounded-full"
                         style={{ backgroundColor: categoryColor(resource.category) }}
                     />
-                    <span className="shrink-0 whitespace-nowrap text-[14px] font-medium leading-7 text-[#080807] transition-colors duration-100 ease-out group-data-active/row:text-[#E8E8E3]">
+                    <span className="min-w-0 flex-1 truncate text-[14px] font-medium leading-7 text-[#080807] transition-colors duration-100 ease-out group-data-active/row:text-[#E8E8E3] sm:flex-none sm:shrink-0 sm:overflow-visible sm:whitespace-nowrap">
                         {resource.title}
                     </span>
                     <span
