@@ -3,10 +3,13 @@ import { db } from "@/lib/db";
 import "dotenv/config";
 import { eq } from "drizzle-orm";
 
+const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@example.com";
+const adminName = process.env.SEED_ADMIN_NAME ?? "Admin";
+
 const DEFAULT_ADMIN = {
-    authUserId: "seed:massahoudouodanou@gmail.com",
-    email: "massahoudouodanou@gmail.com",
-    name: "ODANOU",
+    authUserId: `seed:${adminEmail}`,
+    email: adminEmail,
+    name: adminName,
     isAdmin: true,
 };
 
