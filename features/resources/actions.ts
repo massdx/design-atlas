@@ -1,6 +1,8 @@
 "use server";
 
 import { getAdmin } from "@/features/auth/require-admin";
+import { categories } from "@/features/categories/schema";
+import { notifyManagersOfNewResource } from "@/features/notifications/resource-submitted";
 import { deleteFromFilebase, uploadToFilebase } from "@/features/storage/filebase";
 import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
@@ -191,6 +193,28 @@ export async function submitResource(formData: FormData) {
         });
 
         revalidatePath("/manager");
+
+        try {
+            let categoryName: string | null = null;
+            if (categoryId) {
+                const [cat] = await db
+                    .select({ name: categories.name })
+                    .from(categories)
+                    .where(eq(categories.id, categoryId))
+                    .limit(1);
+                categoryName = cat?.name ?? null;
+            }
+            await notifyManagersOfNewResource({
+                title,
+                url,
+                description: description || null,
+                categoryName,
+                submittedByEmail: submittedByEmail || null,
+            });
+        } catch (err) {
+            console.error("[submitResource] notification failed:", err);
+        }
+
         return { success: true };
     } catch (err) {
         console.error("[submitResource] failed:", err);
