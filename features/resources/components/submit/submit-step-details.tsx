@@ -1,6 +1,6 @@
 "use client";
 
-import { DialogTitle } from "@/components/ui/custom-dialog";
+import { AlertDialogTitle as DialogTitle } from "@/components/ui/custom-alert-dialog";
 import { useTapHaptic } from "@/hooks/use-tap-haptic";
 import { ImageIcon, Link2Icon } from "@radix-ui/react-icons";
 import { Loader } from "lucide-react";
@@ -186,7 +186,7 @@ export function SubmitStepDetails({
                                     transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                                     className="overflow-hidden"
                                 >
-                                    <div className="grid gap-1.5 pt-1">
+                                    <div className="grid gap-1.5 p-1">
                                         <FieldLabel htmlFor="submit-email">Email</FieldLabel>
                                         <StyledInput
                                             id="submit-email"

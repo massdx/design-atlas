@@ -1,6 +1,6 @@
 import { users } from "@/features/auth/schema";
 import { db } from "@/lib/db";
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 export type AdminRow = {
     id: string;
@@ -32,4 +32,13 @@ export async function listAdmins(): Promise<AdminRow[]> {
         linked: !r.authUserId.startsWith("invite:"),
         createdAt: r.createdAt,
     }));
+}
+
+export async function getManagerEmails(): Promise<string[]> {
+    const rows = await db
+        .select({ email: users.email })
+        .from(users)
+        .where(eq(users.isAdmin, true));
+
+    return rows.map((r) => r.email).filter((email) => email.length > 0);
 }

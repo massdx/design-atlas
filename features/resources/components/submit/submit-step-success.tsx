@@ -1,6 +1,6 @@
 "use client";
 
-import { DialogTitle } from "@/components/ui/custom-dialog";
+import { AlertDialogTitle as DialogTitle } from "@/components/ui/custom-alert-dialog";
 import { motion } from "motion/react";
 import { useEffect } from "react";
 import { AnimatedField } from "./animated-field";

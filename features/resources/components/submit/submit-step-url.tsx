@@ -1,6 +1,6 @@
 "use client";
 
-import { DialogTitle } from "@/components/ui/custom-dialog";
+import { AlertDialogTitle as DialogTitle } from "@/components/ui/custom-alert-dialog";
 import { useTapHaptic } from "@/hooks/use-tap-haptic";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { Loader } from "lucide-react";
