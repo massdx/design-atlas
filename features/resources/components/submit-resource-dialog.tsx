@@ -129,7 +129,7 @@ export function SubmitResourceDialog({
     return (
         <AlertDialog open={open} onOpenChange={setOpen} >
             <AlertDialogTrigger asChild>{trigger ?? fallbackTrigger}</AlertDialogTrigger>
-            <AlertDialogContent className="h-full border-5 bg-transparent p-0 shadow-none sm:max-w-4xl">
+            <AlertDialogContent className="h-full border-0 bg-transparent p-0 shadow-none sm:max-w-4xl">
                 <div className="py-12">
                     <AnimatePresence mode="popLayout" initial>
                         {step === "url" && (
